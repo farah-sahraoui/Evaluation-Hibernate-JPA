@@ -118,13 +118,6 @@ MySQL Server
 
 Maven / Hibernate 5.6.15.Final
 
-Base de données :
-
-Créer une base de données nommée stock_db.
-
-Configurer vos identifiants dans le fichier src/main/resources/META-INF/persistence.xml.
-
-
 
 
 ## Conclusion:
