@@ -10,12 +10,10 @@ public class Homme extends Personne {
     @OneToMany(mappedBy = "homme")
     private List<Mariage> mariages;
 
-    // Constructeur par défaut OBLIGATOIRE
     public Homme() {
         super();
     }
 
-    // Constructeur avec paramètres
     public Homme(String nom, String prenom, String telephone, String adresse, Date dateNaissance) {
         super(nom, prenom, telephone, adresse, dateNaissance);
     }

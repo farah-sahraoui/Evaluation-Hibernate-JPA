@@ -95,8 +95,6 @@ public class FemmeService implements IDao<Femme> {
         }
     }
 
-    // Requête native pour le nombre d'enfants d'une femme entre deux dates
-    // Requête native pour le nombre d'enfants d'une femme entre deux dates
     public int getNombreEnfantsEntreDates(int femmeId, Date dateDebut, Date dateFin) {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
@@ -109,7 +107,6 @@ public class FemmeService implements IDao<Femme> {
 
             Object result = query.getSingleResult();
 
-            // Gestion des différents types possibles
             if (result instanceof BigDecimal) {
                 return ((BigDecimal) result).intValue();
             } else if (result instanceof Long) {
@@ -124,7 +121,6 @@ public class FemmeService implements IDao<Femme> {
         }
     }
 
-    // Requête nommée pour les femmes mariées au moins deux fois
     public List<Femme> getFemmesMarieesAuMoinsDeuxFois() {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
@@ -135,7 +131,6 @@ public class FemmeService implements IDao<Femme> {
         }
     }
 
-    // Méthode avec Criteria API pour le nombre d'hommes mariés à 4 femmes entre deux dates
     public long getNombreHommesMarieesAQuatreFemmesEntreDates(Date dateDebut, Date dateFin) {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
@@ -143,7 +138,6 @@ public class FemmeService implements IDao<Femme> {
             CriteriaQuery<Long> cq = cb.createQuery(Long.class);
             Root<ma.project.beans.Mariage> mariage = cq.from(ma.project.beans.Mariage.class);
 
-            // Sélectionner les hommes et compter leurs mariages
             cq.select(cb.count(mariage.get("homme").get("id")))
                     .where(cb.and(
                             cb.greaterThanOrEqualTo(mariage.get("dateDebut"), dateDebut),
@@ -158,7 +152,6 @@ public class FemmeService implements IDao<Femme> {
         }
     }
 
-    // Méthode pour trouver la femme la plus âgée
     public Femme getFemmeLaPlusAgee() {
         EntityManager em = HibernateUtil.getEntityManager();
         try {

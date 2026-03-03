@@ -18,11 +18,9 @@ public class Personne implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date dateNaissance;
 
-    // Constructeur par défaut OBLIGATOIRE pour JPA
     public Personne() {
     }
 
-    // Constructeur avec paramètres
     public Personne(String nom, String prenom, String telephone, String adresse, Date dateNaissance) {
         this.nom = nom;
         this.prenom = prenom;
@@ -31,7 +29,6 @@ public class Personne implements Serializable {
         this.dateNaissance = dateNaissance;
     }
 
-    // Getters et Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

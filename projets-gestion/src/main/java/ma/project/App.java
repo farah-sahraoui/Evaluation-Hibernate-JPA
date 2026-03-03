@@ -26,13 +26,11 @@ public class App {
 
             System.out.println("=== TEST GESTION PROJETS ===\n");
 
-            // NETTOYAGE
             for(EmployeeTache et : employeeTacheService.findAll()) employeeTacheService.delete(et);
             for(Tache t : tacheService.findAll()) tacheService.delete(t);
             for(Projet p : projetService.findAll()) projetService.delete(p);
             for(Employee e : employeeService.findAll()) employeeService.delete(e);
 
-            // CREATION EMPLOYES
             Employee e1 = new Employee("ALAMI", "Ahmed", "0612345678");
             Employee e2 = new Employee("RAMI", "Said", "0623456789");
             Employee e3 = new Employee("BENANI", "Fatima", "0634567890");
@@ -41,14 +39,12 @@ public class App {
             employeeService.create(e2);
             employeeService.create(e3);
 
-            // CREATION PROJETS
             Projet p1 = new Projet("Gestion de stock", sdf.parse("14/01/2013"), sdf.parse("30/04/2013"));
             Projet p2 = new Projet("Site web", sdf.parse("01/02/2014"), sdf.parse("30/06/2014"));
 
             projetService.create(p1);
             projetService.create(p2);
 
-            // CREATION TACHES
             Tache t1 = new Tache("Analyse", sdf.parse("10/02/2013"), sdf.parse("20/02/2013"), 800, p1);
             Tache t2 = new Tache("Conception", sdf.parse("10/03/2013"), sdf.parse("15/03/2013"), 1200, p1);
             Tache t3 = new Tache("Developpement", sdf.parse("10/04/2013"), sdf.parse("25/04/2013"), 2000, p1);
@@ -61,7 +57,6 @@ public class App {
             tacheService.create(t4);
             tacheService.create(t5);
 
-            // AFFECTATIONS
             employeeTacheService.create(new EmployeeTache(e1, t1, sdf.parse("10/02/2013"), sdf.parse("20/02/2013")));
             employeeTacheService.create(new EmployeeTache(e1, t2, sdf.parse("10/03/2013"), sdf.parse("15/03/2013")));
             employeeTacheService.create(new EmployeeTache(e2, t3, sdf.parse("10/04/2013"), sdf.parse("25/04/2013")));

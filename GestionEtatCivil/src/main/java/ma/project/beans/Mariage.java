@@ -26,11 +26,9 @@ public class Mariage implements Serializable {
 
     private int nbrEnfant;
 
-    // Constructeur par défaut OBLIGATOIRE
     public Mariage() {
     }
 
-    // Constructeur avec paramètres
     public Mariage(Homme homme, Femme femme, Date dateDebut, Date dateFin, int nbrEnfant) {
         this.homme = homme;
         this.femme = femme;
@@ -39,7 +37,6 @@ public class Mariage implements Serializable {
         this.nbrEnfant = nbrEnfant;
     }
 
-    // Getters et Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

@@ -14,12 +14,10 @@ public class Femme extends Personne {
     @OneToMany(mappedBy = "femme")
     private List<Mariage> mariages;
 
-    // Constructeur par défaut OBLIGATOIRE
     public Femme() {
         super();
     }
 
-    // Constructeur avec paramètres
     public Femme(String nom, String prenom, String telephone, String adresse, Date dateNaissance) {
         super(nom, prenom, telephone, adresse, dateNaissance);
     }

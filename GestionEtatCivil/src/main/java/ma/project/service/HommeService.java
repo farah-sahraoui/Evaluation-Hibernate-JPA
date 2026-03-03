@@ -92,7 +92,6 @@ public class HommeService implements IDao<Homme> {
         }
     }
 
-    // Méthode pour afficher les épouses d'un homme entre deux dates
     public List<Femme> getEpousesEntreDates(int hommeId, Date dateDebut, Date dateFin) {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
@@ -108,7 +107,6 @@ public class HommeService implements IDao<Homme> {
         }
     }
 
-    // Méthode pour afficher les mariages d'un homme avec détails
     public void afficherMariagesHomme(int hommeId) {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
@@ -120,7 +118,6 @@ public class HommeService implements IDao<Homme> {
 
             System.out.println("Nom : " + homme.getNom().toUpperCase() + " " + homme.getPrenom());
 
-            // Mariages en cours (sans date de fin)
             Query queryEnCours = em.createQuery(
                     "FROM Mariage m WHERE m.homme.id = :hommeId AND m.dateFin IS NULL");
             queryEnCours.setParameter("hommeId", hommeId);
@@ -134,7 +131,6 @@ public class HommeService implements IDao<Homme> {
                 i++;
             }
 
-            // Mariages échoués (avec date de fin)
             Query queryEchoues = em.createQuery(
                     "FROM Mariage m WHERE m.homme.id = :hommeId AND m.dateFin IS NOT NULL");
             queryEchoues.setParameter("hommeId", hommeId);

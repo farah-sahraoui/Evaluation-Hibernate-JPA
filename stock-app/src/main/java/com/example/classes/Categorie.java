@@ -16,11 +16,9 @@ public class Categorie {
     @OneToMany(mappedBy = "categorie", cascade = CascadeType.ALL)
     private List<Produit> produits;
 
-    // Constructeur vide obligatoire
     public Categorie() {
     }
 
-    // Getters et Setters
     public int getId() {
         return id;
     }
