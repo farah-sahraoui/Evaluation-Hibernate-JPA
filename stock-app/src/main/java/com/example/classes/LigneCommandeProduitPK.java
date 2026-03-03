@@ -6,6 +6,7 @@ import java.util.Objects;
 
 @Embeddable
 public class LigneCommandeProduitPK implements Serializable {
+    // Vérifiez que Commande.id et Produit.id sont bien des 'int'
     private int commande;
     private int produit;
 
@@ -15,12 +16,6 @@ public class LigneCommandeProduitPK implements Serializable {
         this.commande = commande;
         this.produit = produit;
     }
-
-    public int getCommande() { return commande; }
-    public void setCommande(int commande) { this.commande = commande; }
-    public int getProduit() { return produit; }
-    public void setProduit(int produit) { this.produit = produit; }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

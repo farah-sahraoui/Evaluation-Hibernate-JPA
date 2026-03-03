@@ -10,36 +10,33 @@ public class App {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-            CategorieService categorieService = new CategorieService();
-            ProduitService produitService = new ProduitService();
-            CommandeService commandeService = new CommandeService();
+            CategorieService catService = new CategorieService();
+            ProduitService prodService = new ProduitService();
+            CommandeService cmdService = new CommandeService();
             LigneCommandeService ligneService = new LigneCommandeService();
 
+            System.out.println("Nettoyage de la base...");
             for(LigneCommandeProduit l : ligneService.findAll()) ligneService.delete(l);
-            for(Produit p : produitService.findAll()) produitService.delete(p);
-            for(Commande c : commandeService.findAll()) commandeService.delete(c);
-            for(Categorie cat : categorieService.findAll()) categorieService.delete(cat);
+            for(Produit p : prodService.findAll()) prodService.delete(p);
+            for(Commande c : cmdService.findAll()) cmdService.delete(c);
+            for(Categorie cat : catService.findAll()) catService.delete(cat);
 
             Categorie cat = new Categorie("INFO", "Informatique");
-            categorieService.create(cat);
+            catService.create(cat);
 
             Produit p1 = new Produit("PC01", 150, cat);
-            produitService.create(p1);
+            prodService.create(p1);
 
             Commande cmd1 = new Commande(sdf.parse("02/03/2026"));
-            commandeService.create(cmd1);
+            cmdService.create(cmd1);
 
-            cmd1 = commandeService.findById(cmd1.getId());
-            p1 = produitService.findById(p1.getId());
+            LigneCommandeProduit lcp = new LigneCommandeProduit(cmd1, p1, 3);
+            ligneService.create(lcp);
 
-
-            ligneService.create(new LigneCommandeProduit(cmd1, p1, 3));
-
-            produitService.getProduitsPrixSuperieur100();
-
-            produitService.afficherProduitsDansCommande(cmd1.getId());
-
-            produitService.getProduitsCommandesEntreDates(
+            System.out.println("\n--- RÉSULTATS ---");
+            prodService.getProduitsPrixSuperieur100();
+            prodService.afficherProduitsDansCommande(cmd1.getId());
+            prodService.getProduitsCommandesEntreDates(
                     sdf.parse("01/03/2026"), sdf.parse("03/03/2026"));
 
         } catch(Exception e) {

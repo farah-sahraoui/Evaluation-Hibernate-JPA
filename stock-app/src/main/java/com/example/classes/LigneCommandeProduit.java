@@ -6,7 +6,7 @@ import javax.persistence.*;
 public class LigneCommandeProduit {
 
     @EmbeddedId
-    private LigneCommandeProduitPK id;
+    private LigneCommandeProduitPK id = new LigneCommandeProduitPK();
 
     @ManyToOne
     @MapsId("commande")
@@ -26,6 +26,7 @@ public class LigneCommandeProduit {
         this.commande = commande;
         this.produit = produit;
         this.quantite = quantite;
+        // Synchronisation de la clé composée
         this.id = new LigneCommandeProduitPK(commande.getId(), produit.getId());
     }
 
