@@ -1,6 +1,5 @@
 package ma.project.service;
 
-
 import ma.project.classes.EmployeeTache;
 import ma.project.dao.IDao;
 import ma.project.util.HibernateUtil;
@@ -15,11 +14,13 @@ public class EmployeeTacheService implements IDao<EmployeeTache> {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            em.persist(o);
+            em.persist(o); // Garder persist car c'est une nouvelle entité
             em.getTransaction().commit();
             return true;
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             e.printStackTrace();
             return false;
         } finally {
@@ -36,7 +37,9 @@ public class EmployeeTacheService implements IDao<EmployeeTache> {
             em.getTransaction().commit();
             return true;
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             e.printStackTrace();
             return false;
         } finally {
@@ -49,11 +52,14 @@ public class EmployeeTacheService implements IDao<EmployeeTache> {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            em.remove(em.contains(o) ? o : em.merge(o));
+            o = em.merge(o); // Important : merger d'abord l'entité détachée
+            em.remove(o);
             em.getTransaction().commit();
             return true;
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             e.printStackTrace();
             return false;
         } finally {

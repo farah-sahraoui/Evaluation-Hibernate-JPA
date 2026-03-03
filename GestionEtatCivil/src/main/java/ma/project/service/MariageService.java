@@ -1,5 +1,7 @@
 package ma.project.service;
+
 import ma.project.beans.Mariage;
+import ma.project.beans.MariagePK;
 import ma.project.dao.IDao;
 import ma.project.util.HibernateUtil;
 import javax.persistence.EntityManager;
@@ -13,6 +15,14 @@ public class MariageService implements IDao<Mariage> {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
             em.getTransaction().begin();
+
+            if (!em.contains(o.getHomme())) {
+                o.setHomme(em.merge(o.getHomme()));
+            }
+            if (!em.contains(o.getFemme())) {
+                o.setFemme(em.merge(o.getFemme()));
+            }
+
             em.persist(o);
             em.getTransaction().commit();
             return true;
@@ -51,7 +61,8 @@ public class MariageService implements IDao<Mariage> {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            em.remove(em.contains(o) ? o : em.merge(o));
+            o = em.merge(o);
+            em.remove(o);
             em.getTransaction().commit();
             return true;
         } catch (Exception e) {
@@ -67,6 +78,10 @@ public class MariageService implements IDao<Mariage> {
 
     @Override
     public Mariage findById(int id) {
+        throw new UnsupportedOperationException("Utilisez findById(MariagePK id) à la place");
+    }
+
+    public Mariage findById(MariagePK id) {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
             return em.find(Mariage.class, id);

@@ -1,16 +1,8 @@
 package ma.project;
 
-
-import ma.project.classes.Employee;
-import ma.project.classes.Projet;
-import ma.project.classes.Tache;
-import ma.project.classes.EmployeeTache;
-import ma.project.service.EmployeeService;
-import ma.project.service.ProjetService;
-import ma.project.service.TacheService;
-import ma.project.service.EmployeeTacheService;
+import ma.project.classes.*;
+import ma.project.service.*;
 import ma.project.util.HibernateUtil;
-
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -22,11 +14,11 @@ public class App {
             EmployeeService employeeService = new EmployeeService();
             ProjetService projetService = new ProjetService();
             TacheService tacheService = new TacheService();
-            EmployeeTacheService employeeTacheService = new EmployeeTacheService();
+            EmployeeTacheService etService = new EmployeeTacheService();
 
             System.out.println("=== TEST GESTION PROJETS ===\n");
 
-            for(EmployeeTache et : employeeTacheService.findAll()) employeeTacheService.delete(et);
+            for(EmployeeTache et : etService.findAll()) etService.delete(et);
             for(Tache t : tacheService.findAll()) tacheService.delete(t);
             for(Projet p : projetService.findAll()) projetService.delete(p);
             for(Employee e : employeeService.findAll()) employeeService.delete(e);
@@ -38,12 +30,14 @@ public class App {
             employeeService.create(e1);
             employeeService.create(e2);
             employeeService.create(e3);
+            System.out.println("3 employes crees");
 
             Projet p1 = new Projet("Gestion de stock", sdf.parse("14/01/2013"), sdf.parse("30/04/2013"));
             Projet p2 = new Projet("Site web", sdf.parse("01/02/2014"), sdf.parse("30/06/2014"));
 
             projetService.create(p1);
             projetService.create(p2);
+            System.out.println("2 projets crees");
 
             Tache t1 = new Tache("Analyse", sdf.parse("10/02/2013"), sdf.parse("20/02/2013"), 800, p1);
             Tache t2 = new Tache("Conception", sdf.parse("10/03/2013"), sdf.parse("15/03/2013"), 1200, p1);
@@ -56,20 +50,31 @@ public class App {
             tacheService.create(t3);
             tacheService.create(t4);
             tacheService.create(t5);
+            System.out.println("5 taches creees");
 
-            employeeTacheService.create(new EmployeeTache(e1, t1, sdf.parse("10/02/2013"), sdf.parse("20/02/2013")));
-            employeeTacheService.create(new EmployeeTache(e1, t2, sdf.parse("10/03/2013"), sdf.parse("15/03/2013")));
-            employeeTacheService.create(new EmployeeTache(e2, t3, sdf.parse("10/04/2013"), sdf.parse("25/04/2013")));
-            employeeTacheService.create(new EmployeeTache(e2, t4, sdf.parse("05/02/2014"), sdf.parse("20/02/2014")));
-            employeeTacheService.create(new EmployeeTache(e3, t5, sdf.parse("01/03/2014"), sdf.parse("15/05/2014")));
+            e1 = employeeService.findById(e1.getId());
+            e2 = employeeService.findById(e2.getId());
+            e3 = employeeService.findById(e3.getId());
+            t1 = tacheService.findById(t1.getId());
+            t2 = tacheService.findById(t2.getId());
+            t3 = tacheService.findById(t3.getId());
+            t4 = tacheService.findById(t4.getId());
+            t5 = tacheService.findById(t5.getId());
 
-            System.out.println("1. Liste des taches par employe (Ahmed ALAMI):");
+            etService.create(new EmployeeTache(e1, t1, sdf.parse("10/02/2013"), sdf.parse("20/02/2013")));
+            etService.create(new EmployeeTache(e1, t2, sdf.parse("10/03/2013"), sdf.parse("15/03/2013")));
+            etService.create(new EmployeeTache(e2, t3, sdf.parse("10/04/2013"), sdf.parse("25/04/2013")));
+            etService.create(new EmployeeTache(e2, t4, sdf.parse("05/02/2014"), sdf.parse("20/02/2014")));
+            etService.create(new EmployeeTache(e3, t5, sdf.parse("01/03/2014"), sdf.parse("15/05/2014")));
+            System.out.println("5 affectations creees\n");
+
+            System.out.println("1. Taches realisees par Ahmed ALAMI:");
             List<Tache> tachesE1 = employeeService.getTachesRealiseesParEmploye(e1.getId());
             for(Tache t : tachesE1) {
                 System.out.println("   - " + t.getNom());
             }
 
-            System.out.println("\n2. Liste des projets geres par employe (Ahmed ALAMI):");
+            System.out.println("\n2. Projets geres par Ahmed ALAMI:");
             List<Projet> projetsE1 = employeeService.getProjetsGererParEmploye(e1.getId());
             for(Projet p : projetsE1) {
                 System.out.println("   - " + p.getNom());

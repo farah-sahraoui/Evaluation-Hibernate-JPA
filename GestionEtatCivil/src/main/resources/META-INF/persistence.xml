@@ -10,6 +10,7 @@
         <class>ma.project.beans.Homme</class>
         <class>ma.project.beans.Femme</class>
         <class>ma.project.beans.Mariage</class>
+        <class>ma.project.beans.MariagePK</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>

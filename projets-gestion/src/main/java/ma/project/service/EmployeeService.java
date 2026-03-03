@@ -101,14 +101,11 @@ public class EmployeeService implements IDao<Employee> {
     public List<Projet> getProjetsGererParEmploye(int employeeId) {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
-            List<Tache> taches = getTachesRealiseesParEmploye(employeeId);
-            List<Projet> projets = new ArrayList<>();
-            for(Tache t : taches) {
-                if(!projets.contains(t.getProjet())) {
-                    projets.add(t.getProjet());
-                }
-            }
-            return projets;
+            Query query = em.createQuery(
+                    "SELECT DISTINCT t.projet FROM EmployeeTache et " +
+                            "JOIN et.tache t WHERE et.employee.id = :employeeId");
+            query.setParameter("employeeId", employeeId);
+            return query.getResultList();
         } finally {
             em.close();
         }

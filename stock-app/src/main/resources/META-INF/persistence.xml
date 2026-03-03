@@ -4,18 +4,18 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
              http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
 
-    <persistence-unit name="projetPU" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="stockPU" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-        <class>ma.project.classes.Employee</class>
-        <class>ma.project.classes.Projet</class>
-        <class>ma.project.classes.Tache</class>
-        <class>ma.project.classes.EmployeeTache</class>
-        <class>ma.project.classes.EmployeeTachePK</class>
+        <class>com.example.classes.Categorie</class>
+        <class>com.example.classes.Produit</class>
+        <class>com.example.classes.Commande</class>
+        <class>com.example.classes.LigneCommandeProduit</class>
+        <class>com.example.classes.LigneCommandeProduitPK</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/projets_db?useSSL=false"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/stock_db?useSSL=false"/>
             <property name="javax.persistence.jdbc.user" value="root"/>
             <property name="javax.persistence.jdbc.password" value=""/>
 

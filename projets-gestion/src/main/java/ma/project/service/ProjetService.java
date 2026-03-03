@@ -7,6 +7,7 @@ import ma.project.dao.IDao;
 import ma.project.util.HibernateUtil;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class ProjetService implements IDao<Projet> {
@@ -103,8 +104,10 @@ public class ProjetService implements IDao<Projet> {
                 return;
             }
 
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
             System.out.println("Projet : " + projet.getId() + "      Nom : " + projet.getNom() +
-                    "     Date debut : " + projet.getDateDebut());
+                    "     Date debut : " + sdf.format(projet.getDateDebut()));
             System.out.println("Liste des taches:");
             System.out.println("Num Nom            Date Debut Reelle   Date Fin Reelle");
 
@@ -117,8 +120,8 @@ public class ProjetService implements IDao<Projet> {
                 System.out.printf("%-4d %-15s %-20s %-15s%n",
                         et.getTache().getId(),
                         et.getTache().getNom(),
-                        et.getDateDebutReelle(),
-                        et.getDateFinReelle());
+                        sdf.format(et.getDateDebutReelle()),
+                        sdf.format(et.getDateFinReelle()));
             }
         } finally {
             em.close();

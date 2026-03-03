@@ -1,12 +1,11 @@
 package ma.project.classes;
 
-
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-@NamedQuery(name = "Tache.prixSuperieurA1000",
+@NamedQuery(name = "Tache.prixSuperieur1000",
         query = "FROM Tache WHERE prix > 1000")
 public class Tache {
     @Id

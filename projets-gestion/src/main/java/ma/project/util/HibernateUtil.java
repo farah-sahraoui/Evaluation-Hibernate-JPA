@@ -1,4 +1,5 @@
 package ma.project.util;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -9,7 +10,7 @@ public class HibernateUtil {
 
     static {
         try {
-            entityManagerFactory = Persistence.createEntityManagerFactory("gestionprojetsPU");
+            entityManagerFactory = Persistence.createEntityManagerFactory("projetPU");
         } catch (Throwable ex) {
             System.err.println("Initial EntityManagerFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);

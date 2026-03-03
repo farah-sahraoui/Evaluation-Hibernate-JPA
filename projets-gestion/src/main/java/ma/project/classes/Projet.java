@@ -37,5 +37,5 @@ public class Projet {
     public Date getDateFin() { return dateFin; }
     public void setDateFin(Date dateFin) { this.dateFin = dateFin; }
     public List<Tache> getTaches() { return taches; }
-    public void setTaches(List<Tache> taches) { this.taches = taches; }
+    public void setTaches(List<ma.project.classes.Tache> taches) { this.taches = taches; }
 }

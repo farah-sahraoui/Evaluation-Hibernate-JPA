@@ -2,6 +2,7 @@ package ma.project.service;
 
 
 import ma.project.beans.Femme;
+import ma.project.beans.Mariage;
 import ma.project.dao.IDao;
 import ma.project.util.HibernateUtil;
 import javax.persistence.EntityManager;
@@ -98,24 +99,14 @@ public class FemmeService implements IDao<Femme> {
     public int getNombreEnfantsEntreDates(int femmeId, Date dateDebut, Date dateFin) {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
-            Query query = em.createNativeQuery(
-                    "SELECT COALESCE(SUM(m.nbrEnfant), 0) FROM mariage m " +
-                            "WHERE m.femme_id = ? AND m.dateDebut BETWEEN ? AND ?");
-            query.setParameter(1, femmeId);
-            query.setParameter(2, dateDebut);
-            query.setParameter(3, dateFin);
+            Query query = em.createQuery(
+                    "SELECT COALESCE(SUM(m.nbrEnfant), 0) FROM Mariage m WHERE m.femme.id = :femmeId AND m.id.dateDebut BETWEEN :dateDebut AND :dateFin");
+            query.setParameter("femmeId", femmeId);
+            query.setParameter("dateDebut", dateDebut);
+            query.setParameter("dateFin", dateFin);
 
-            Object result = query.getSingleResult();
-
-            if (result instanceof BigDecimal) {
-                return ((BigDecimal) result).intValue();
-            } else if (result instanceof Long) {
-                return ((Long) result).intValue();
-            } else if (result instanceof Integer) {
-                return (Integer) result;
-            } else {
-                return 0;
-            }
+            Long result = (Long) query.getSingleResult();
+            return result != null ? result.intValue() : 0;
         } finally {
             em.close();
         }
@@ -134,19 +125,16 @@ public class FemmeService implements IDao<Femme> {
     public long getNombreHommesMarieesAQuatreFemmesEntreDates(Date dateDebut, Date dateFin) {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-            Root<ma.project.beans.Mariage> mariage = cq.from(ma.project.beans.Mariage.class);
+            Query query = em.createQuery(
+                    "SELECT m.homme.id FROM Mariage m " +
+                            "WHERE m.id.dateDebut BETWEEN :dateDebut AND :dateFin " +
+                            "GROUP BY m.homme.id " +
+                            "HAVING COUNT(m) = 4");
+            query.setParameter("dateDebut", dateDebut);
+            query.setParameter("dateFin", dateFin);
 
-            cq.select(cb.count(mariage.get("homme").get("id")))
-                    .where(cb.and(
-                            cb.greaterThanOrEqualTo(mariage.get("dateDebut"), dateDebut),
-                            cb.lessThanOrEqualTo(mariage.get("dateDebut"), dateFin)
-                    ))
-                    .groupBy(mariage.get("homme").get("id"))
-                    .having(cb.equal(cb.count(mariage.get("id")), 4));
-
-            return em.createQuery(cq).getResultList().size();
+            List<Integer> result = query.getResultList();
+            return result.size();
         } finally {
             em.close();
         }

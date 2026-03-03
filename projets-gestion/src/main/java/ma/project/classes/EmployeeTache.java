@@ -1,23 +1,23 @@
 package ma.project.classes;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-public class EmployeeTache implements Serializable {
+public class EmployeeTache {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @EmbeddedId
+    private ma.project.classes.EmployeeTachePK id;
 
     @ManyToOne
+    @MapsId("employee")
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
     @ManyToOne
+    @MapsId("tache")
     @JoinColumn(name = "tache_id")
-    private Tache tache;
+    private ma.project.classes.Tache tache;
 
     @Temporal(TemporalType.DATE)
     private Date dateDebutReelle;
@@ -27,19 +27,20 @@ public class EmployeeTache implements Serializable {
 
     public EmployeeTache() {}
 
-    public EmployeeTache(Employee employee, Tache tache, Date dateDebutReelle, Date dateFinReelle) {
+    public EmployeeTache(Employee employee, ma.project.classes.Tache tache, Date dateDebutReelle, Date dateFinReelle) {
         this.employee = employee;
         this.tache = tache;
         this.dateDebutReelle = dateDebutReelle;
         this.dateFinReelle = dateFinReelle;
+        this.id = new ma.project.classes.EmployeeTachePK(employee.getId(), tache.getId());
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public ma.project.classes.EmployeeTachePK getId() { return id; }
+    public void setId(ma.project.classes.EmployeeTachePK id) { this.id = id; }
     public Employee getEmployee() { return employee; }
     public void setEmployee(Employee employee) { this.employee = employee; }
-    public Tache getTache() { return tache; }
-    public void setTache(Tache tache) { this.tache = tache; }
+    public ma.project.classes.Tache getTache() { return tache; }
+    public void setTache(ma.project.classes.Tache tache) { this.tache = tache; }
     public Date getDateDebutReelle() { return dateDebutReelle; }
     public void setDateDebutReelle(Date dateDebutReelle) { this.dateDebutReelle = dateDebutReelle; }
     public Date getDateFinReelle() { return dateFinReelle; }

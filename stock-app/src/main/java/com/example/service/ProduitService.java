@@ -1,13 +1,15 @@
 package com.example.service;
 
-import com.example.classes.Categorie;
-import com.example.classes.LigneCommandeProduit;
+
 import com.example.classes.Produit;
+import com.example.classes.Categorie;
+import com.example.classes.Commande;
+import com.example.classes.LigneCommandeProduit;
 import com.example.dao.IDao;
 import com.example.util.HibernateUtil;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -15,125 +17,153 @@ public class ProduitService implements IDao<Produit> {
 
     @Override
     public boolean create(Produit o) {
-
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction tx = session.beginTransaction();
-
-        session.save(o);
-
-        tx.commit();
-        session.close();
-
-        return true;
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.persist(o);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public boolean update(Produit o) {
-
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction tx = session.beginTransaction();
-
-        session.update(o);
-
-        tx.commit();
-        session.close();
-
-        return true;
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(o);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public boolean delete(Produit o) {
-
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction tx = session.beginTransaction();
-
-        session.delete(o);
-
-        tx.commit();
-        session.close();
-
-        return true;
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.remove(em.contains(o) ? o : em.merge(o));
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public Produit findById(int id) {
-
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Produit p = session.get(Produit.class, id);
-        session.close();
-
-        return p;
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            return em.find(Produit.class, id);
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public List<Produit> findAll() {
-
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        List<Produit> produits = session.createQuery("from Produit").list();
-        session.close();
-
-        return produits;
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            Query query = em.createQuery("from Produit");
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
     }
 
-    // ===============================
-    // produits par categorie
-    // ===============================
-
-    public List<Produit> findByCategorie(Categorie categorie) {
-
-        Session session = HibernateUtil.getSessionFactory().openSession();
-
-        List<Produit> produits = session.createQuery(
-                        "from Produit p where p.categorie.id = :id")
-                .setParameter("id", categorie.getId())
-                .list();
-
-        session.close();
-
-        return produits;
+    public List<Produit> getProduitsParCategorie(int categorieId) {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            Query query = em.createQuery("FROM Produit p WHERE p.categorie.id = :id");
+            query.setParameter("id", categorieId);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
     }
 
-    // ===============================
-    // produits prix > 100 (NamedQuery)
-    // ===============================
+    public void getProduitsCommandesEntreDates(Date dateDebut, Date dateFin) {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            System.out.println("\n==== PRODUCTS ENTRE DEUX DATES ====");
 
-    public List<Produit> findPrixSuperieur100() {
+            Query query = em.createQuery(
+                    "SELECT l FROM LigneCommandeProduit l WHERE l.commande.date BETWEEN :debut AND :fin");
+            query.setParameter("debut", dateDebut);
+            query.setParameter("fin", dateFin);
 
-        Session session = HibernateUtil.getSessionFactory().openSession();
+            List<LigneCommandeProduit> lignes = query.getResultList();
 
-        List<Produit> produits =
-                session.createNamedQuery("Produit.prixSuperieur100").list();
-
-        session.close();
-
-        return produits;
+            for(LigneCommandeProduit l : lignes) {
+                System.out.println("Commande : " + l.getCommande().getId() +
+                        " | Produit : " + l.getProduit().getReference() +
+                        " | Prix : " + l.getProduit().getPrix() + " DH" +
+                        " | Quantité : " + l.getQuantite());
+            }
+        } finally {
+            em.close();
+        }
     }
-    public List<LigneCommandeProduit> findProduitsEntreDates(Date d1, Date d2) {
 
-        Session session = HibernateUtil.getSessionFactory().openSession();
+    public void afficherProduitsDansCommande(int commandeId) {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            Commande commande = em.find(Commande.class, commandeId);
+            if(commande == null) {
+                System.out.println("Commande non trouvée");
+                return;
+            }
 
-        List<LigneCommandeProduit> list =
-                session.createQuery(
-                                "from LigneCommandeProduit l where l.commande.date between :d1 and :d2")
-                        .setParameter("d1", d1)
-                        .setParameter("d2", d2)
-                        .list();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy");
+            System.out.println("\n==== PRODUCTS D'UNE COMMANDE ====");
+            System.out.println("Commande : " + commande.getId() + "    Date : " + sdf.format(commande.getDate()));
+            System.out.println("\nListe des produits :");
+            System.out.println("Référence   Prix    Quantité");
 
-        session.close();
+            Query query = em.createQuery(
+                    "SELECT l FROM LigneCommandeProduit l WHERE l.commande.id = :id");
+            query.setParameter("id", commandeId);
+            List<LigneCommandeProduit> lignes = query.getResultList();
 
-        return list;
-    }public List<LigneCommandeProduit> findProduitsByCommande(int commandeId) {
+            for(LigneCommandeProduit l : lignes) {
+                System.out.printf("%-10s %-7.0f DH    %d%n",
+                        l.getProduit().getReference(),
+                        l.getProduit().getPrix(),
+                        l.getQuantite());
+            }
+        } finally {
+            em.close();
+        }
+    }
 
-        Session session = HibernateUtil.getSessionFactory().openSession();
+    public void getProduitsPrixSuperieur100() {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            System.out.println("==== PRODUCTS PRIX > 100 DH ====");
+            Query query = em.createNamedQuery("Produit.prixSuperieur100");
+            List<Produit> produits = query.getResultList();
 
-        List<LigneCommandeProduit> list =
-                session.createQuery(
-                                "from LigneCommandeProduit l where l.commande.id = :id")
-                        .setParameter("id", commandeId)
-                        .list();
-
-        session.close();
-
-        return list;
+            for(Produit p : produits) {
+                System.out.println("Référence : " + p.getReference() + " | Prix : " + p.getPrix() + " DH");
+            }
+        } finally {
+            em.close();
+        }
     }
 }

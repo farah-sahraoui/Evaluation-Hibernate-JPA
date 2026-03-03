@@ -1,20 +1,33 @@
-
 package com.example.util;
 
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 public class HibernateUtil {
 
-    private static final SessionFactory sessionFactory;
+    private static final EntityManagerFactory entityManagerFactory;
 
     static {
-        sessionFactory = new Configuration()
-                .configure()
-                .buildSessionFactory();
+        try {
+            entityManagerFactory = Persistence.createEntityManagerFactory("stockPU");
+        } catch (Throwable ex) {
+            System.err.println("Initial EntityManagerFactory creation failed." + ex);
+            throw new ExceptionInInitializerError(ex);
+        }
     }
 
-    public static SessionFactory getSessionFactory() {
-        return sessionFactory;
+    public static EntityManager getEntityManager() {
+        return entityManagerFactory.createEntityManager();
+    }
+
+    public static void close() {
+        if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
+            entityManagerFactory.close();
+        }
+    }
+
+    public static void getSessionFactory() {
+
     }
 }

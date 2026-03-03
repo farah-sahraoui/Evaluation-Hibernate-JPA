@@ -1,12 +1,11 @@
 package com.example.classes;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 public class Commande {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -14,29 +13,23 @@ public class Commande {
     @Temporal(TemporalType.DATE)
     private Date date;
 
-    @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL , fetch = FetchType.EAGER)
-    private List<LigneCommandeProduit> lignes;
+    @OneToMany(mappedBy = "commande")
+    private List<LigneCommandeProduit> ligneCommandes;
 
-    public Commande() {
-    }
+    public Commande() {}
 
-    public int getId() {
-        return id;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
+    public Commande(Date date) {
         this.date = date;
     }
 
-    public List<LigneCommandeProduit> getLignes() {
-        return lignes;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public Date getDate() { return date; }
+    public void setDate(Date date) { this.date = date; }
+    public List<LigneCommandeProduit> getLigneCommandes() { return ligneCommandes; }
+    public void setLigneCommandes(List<LigneCommandeProduit> ligneCommandes) { this.ligneCommandes = ligneCommandes; }
 
-    public void setLignes(List<LigneCommandeProduit> lignes) {
-        this.lignes = lignes;
+    public LigneCommandeProduit[] getLignes() {
+        return null;
     }
 }

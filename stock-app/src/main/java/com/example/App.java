@@ -1,120 +1,51 @@
 package com.example;
 
-import com.example.classes.Categorie;
-import com.example.classes.Commande;
-import com.example.classes.LigneCommandeProduit;
-import com.example.classes.Produit;
-import com.example.service.CategorieService;
-import com.example.service.CommandeService;
-import com.example.service.ProduitService;
-
+import com.example.classes.*;
+import com.example.service.*;
+import com.example.util.HibernateUtil;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 public class App {
-
     public static void main(String[] args) {
-
-        ProduitService produitService = new ProduitService();
-        CategorieService categorieService = new CategorieService();
-        CommandeService commandeService = new CommandeService();
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy");
-
-        // ============================================
-        // 1. Affichage produits par catégorie
-        // ============================================
-
-        System.out.println("\n===== PRODUITS PAR CATEGORIE =====");
-
-        Categorie categorie = categorieService.findById(1);
-
-        if (categorie != null) {
-
-            List<Produit> produits = produitService.findByCategorie(categorie);
-
-            for (Produit p : produits) {
-
-                System.out.println(
-                        "Référence : " + p.getReference()
-                                + " | Prix : " + p.getPrix() + " DH"
-                );
-            }
-        }
-
-        // ============================================
-        // 2. Affichage produits prix > 100 DH
-        // ============================================
-
-        System.out.println("\n===== PRODUITS PRIX > 100 DH =====");
-
-        List<Produit> produitsCher = produitService.findPrixSuperieur100();
-
-        for (Produit p : produitsCher) {
-
-            System.out.println(
-                    "Référence : " + p.getReference()
-                            + " | Prix : " + p.getPrix() + " DH"
-            );
-        }
-
-        // ============================================
-        // 3. Affichage produits d'une commande
-        // ============================================
-
-        System.out.println("\n===== PRODUITS D'UNE COMMANDE =====");
-
-        Commande commande = commandeService.findById(1);
-
-        if (commande != null) {
-
-            System.out.println(
-                    "\nCommande : " + commande.getId()
-                            + "     Date : " + sdf.format(commande.getDate())
-            );
-
-            System.out.println("\nListe des produits :");
-            System.out.println("Référence\tPrix\tQuantité");
-
-            for (LigneCommandeProduit ligne : commande.getLignes()) {
-
-                System.out.println(
-                        ligne.getProduit().getReference() + "\t\t"
-                                + ligne.getProduit().getPrix() + " DH\t"
-                                + ligne.getQuantite()
-                );
-            }
-        }
-
-        // ============================================
-        // 4. Affichage produits entre deux dates
-        // ============================================
-
-        System.out.println("\n===== PRODUITS ENTRE DEUX DATES =====");
-
         try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-            Date d1 = sdf.parse("01 January 2020");
-            Date d2 = sdf.parse("31 December 2030");
+            CategorieService categorieService = new CategorieService();
+            ProduitService produitService = new ProduitService();
+            CommandeService commandeService = new CommandeService();
+            LigneCommandeService ligneService = new LigneCommandeService();
 
-            List<LigneCommandeProduit> lignes =
-                    produitService.findProduitsEntreDates(d1, d2);
+            for(LigneCommandeProduit l : ligneService.findAll()) ligneService.delete(l);
+            for(Produit p : produitService.findAll()) produitService.delete(p);
+            for(Commande c : commandeService.findAll()) commandeService.delete(c);
+            for(Categorie cat : categorieService.findAll()) categorieService.delete(cat);
 
-            for (LigneCommandeProduit ligne : lignes) {
+            Categorie cat = new Categorie("INFO", "Informatique");
+            categorieService.create(cat);
 
-                System.out.println(
-                        "Commande : " + ligne.getCommande().getId()
-                                + " | Produit : " + ligne.getProduit().getReference()
-                                + " | Prix : " + ligne.getProduit().getPrix()
-                                + " DH | Quantité : " + ligne.getQuantite()
-                );
-            }
+            Produit p1 = new Produit("PC01", 150, cat);
+            produitService.create(p1);
 
-        } catch (Exception e) {
+            Commande cmd1 = new Commande(sdf.parse("02/03/2026"));
+            commandeService.create(cmd1);
+
+            cmd1 = commandeService.findById(cmd1.getId());
+            p1 = produitService.findById(p1.getId());
+
+
+            ligneService.create(new LigneCommandeProduit(cmd1, p1, 3));
+
+            produitService.getProduitsPrixSuperieur100();
+
+            produitService.afficherProduitsDansCommande(cmd1.getId());
+
+            produitService.getProduitsCommandesEntreDates(
+                    sdf.parse("01/03/2026"), sdf.parse("03/03/2026"));
+
+        } catch(Exception e) {
             e.printStackTrace();
+        } finally {
+            HibernateUtil.close();
         }
-
-        System.out.println("\n===== FIN =====");
     }
 }

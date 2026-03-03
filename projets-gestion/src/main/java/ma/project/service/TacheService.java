@@ -1,12 +1,10 @@
 package ma.project.service;
 
-
 import ma.project.classes.Tache;
 import ma.project.dao.IDao;
 import ma.project.util.HibernateUtil;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -87,7 +85,7 @@ public class TacheService implements IDao<Tache> {
     public List<Tache> getTachesPrixSuperieurA1000() {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
-            Query query = em.createNamedQuery("Tache.prixSuperieurA1000");
+            Query query = em.createNamedQuery("Tache.prixSuperieur1000");
             return query.getResultList();
         } finally {
             em.close();
